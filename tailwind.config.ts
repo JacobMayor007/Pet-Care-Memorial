@@ -8,9 +8,13 @@ export default {
   ],
   theme: {
     extend: {
-      colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+      fontFamily: {
+        montserrat: ["Montserrat"],
+        hind:["Hind"],
+        sigmar:["Sigmar"],
+      },
+       animation: {
+        bounce: 'bounce 1s infinite',
       },
     },
   },

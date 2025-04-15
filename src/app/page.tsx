@@ -1,8 +1,47 @@
+"use client";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import isAuthenticate from "./fetchData/isAuthenticate";
+import { useRouter } from "next/navigation";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebase/config";
 
 export default function Home() {
+  const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const login = await isAuthenticate();
+      if (!login) {
+        router.push("/Login");
+      } else {
+        setIsLoggedIn(true);
+      }
+    };
+
+    checkAuthentication();
+  }, [router]);
+
+  if (!isLoggedIn) {
+    return (
+      <div>
+        <div></div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <button
+        onClick={() => {
+          signOut(auth);
+          router.push("/Login");
+        }}
+      >
+        Logout
+      </button>
+
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <Image
           className="dark:invert"
