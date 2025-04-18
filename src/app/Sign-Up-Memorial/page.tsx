@@ -43,9 +43,48 @@ export default function SignUp() {
     memorialAddress: "",
     typeOfPayment: [],
     memorialServices: [],
+    memorialWorkDays: [],
   });
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent duplicate submissions
   const [checkBox, setCheckBox] = useState(false);
+
+  const weeks = [
+    {
+      key: 0,
+      value: 0,
+      label: "Sunday",
+    },
+    {
+      key: 1,
+      value: 1,
+      label: "Monday",
+    },
+    {
+      key: 2,
+      value: 2,
+      label: "Tuesday",
+    },
+    {
+      key: 3,
+      value: 3,
+      label: "Wednesday",
+    },
+    {
+      key: 4,
+      value: 4,
+      label: "Thursday",
+    },
+    {
+      key: 5,
+      value: 5,
+      label: "Friday",
+    },
+    {
+      key: 6,
+      value: 6,
+      label: "Saturday",
+    },
+  ];
 
   const paymentMethods = [
     {
@@ -99,6 +138,7 @@ export default function SignUp() {
       !formData.memorialAddress ||
       !formData.memorialName ||
       !formData.memorialServices ||
+      !formData.contact ||
       !formData.typeOfPayment ||
       !checkBox
     ) {
@@ -146,7 +186,7 @@ export default function SignUp() {
 
       const userRef = doc(db, "Users", res.user.uid);
       await setDoc(userRef, {
-        User_Name: formData.fName + formData.lName,
+        User_Name: formData.fName + " " + formData.lName,
         User_Email: formData.email,
         User_UID: res.user.uid,
         TermsAndConditions: checkBox,
@@ -163,6 +203,7 @@ export default function SignUp() {
         mortician_memorial_address: formData.memorialAddress,
         mortician_memorial_payments: formData.typeOfPayment,
         morticial_memorial_services: formData.memorialServices,
+        mortician_memorial_working_days: formData.memorialWorkDays,
         TermsAndConditions: checkBox,
       });
 
@@ -178,6 +219,7 @@ export default function SignUp() {
         memorialAddress: "",
         typeOfPayment: [],
         memorialServices: [],
+        memorialWorkDays: [],
       });
 
       router.push("/Login");
@@ -238,6 +280,7 @@ export default function SignUp() {
         mortician_memorial_address: formData.memorialAddress,
         mortician_memorial_payments: formData.typeOfPayment,
         morticial_memorial_services: formData.memorialServices,
+        mortician_memorial_working_days: formData.memorialWorkDays,
         TermsAndConditions: checkBox,
       });
 
@@ -303,6 +346,7 @@ export default function SignUp() {
         mortician_memorial_address: formData.memorialAddress,
         mortician_memorial_payments: formData.typeOfPayment,
         mortician_memorial_services: formData.memorialServices,
+        mortician_memorial_working_days: formData.memorialWorkDays,
         TermsAndConditions: checkBox,
       });
 
@@ -317,9 +361,7 @@ export default function SignUp() {
     }
   };
 
-  console.log("Value of Checkbox: ", checkBox);
-  console.log("Type Of Payment: ", formData.typeOfPayment);
-  console.log("Memorial Services: ", formData.memorialServices);
+  console.log("Working Days: ", formData.memorialWorkDays);
 
   return (
     <>
@@ -560,10 +602,10 @@ export default function SignUp() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-10">
+            <div className="grid grid-cols-2">
               <Select
                 allowClear
-                className="h-10"
+                className="h-10 mr-5"
                 mode="multiple"
                 onChange={(value) =>
                   setFormData({ ...formData, typeOfPayment: value })
@@ -573,13 +615,23 @@ export default function SignUp() {
               />
               <Select
                 allowClear
-                className="h-10"
+                className="h-10 ml-5"
                 mode="multiple"
                 onChange={(value) =>
                   setFormData({ ...formData, memorialServices: value })
                 }
                 options={services}
                 placeholder="Select Type Of Memorial Services"
+              />
+              <Select
+                allowClear
+                placeholder="Select your available days"
+                className="h-fit mr-5 mt-5"
+                mode="multiple"
+                options={weeks}
+                onChange={(value) =>
+                  setFormData({ ...formData, memorialWorkDays: value })
+                }
               />
             </div>
 
@@ -656,7 +708,7 @@ const RegisterAs = () => {
       key: 0,
       label: "Pet Owner",
       icon: faPaw,
-      route: "/Sign-Up",
+      route: "https://pet-care-pro.vercel.app/Sign-Up",
     },
     {
       key: 1,
@@ -680,7 +732,7 @@ const RegisterAs = () => {
       key: 4,
       label: "Pet Memorial",
       icon: faDove,
-      route: "/Funeral",
+      route: "/Sign-Up-Memorial",
     },
 
     {
