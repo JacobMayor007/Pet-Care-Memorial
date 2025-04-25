@@ -273,28 +273,34 @@ export default function Navigation() {
                 {userData[0]?.User_Name}
               </h1>
               <Link
-                href={`/Profile/${userUID}`}
-                className="text-center font-hind  h-full w-44 flex items-center justify-center border-b-[1px] border-[#B1B1B1]"
-              >
-                My Profile
-              </Link>
-              <Link
-                href={`/Doctor`}
+                href={`https://doctor-pet-care-pro.vercel.app/Login`}
                 className="text-center font-hind  h-full w-44 flex items-center justify-center border-b-[1px] border-[#B1B1B1]"
               >
                 Want to become part of our doctors?
               </Link>
               <Link
-                href={`/Provider`}
+                href={`https://seller-pet-care-pro.vercel.app/Login`}
                 className="text-center font-hind  h-full w-44 flex items-center justify-center border-b-[1px] border-[#B1B1B1]"
               >
                 Want to become part of our product sellers?
               </Link>
               <Link
-                href={`/Renter`}
+                href={`https://boarding-pet-care-pro.vercel.app/Login`}
                 className="text-center font-hind  h-full w-44 flex items-center justify-center border-b-[1px] border-[#B1B1B1]"
               >
                 Want to become part of our renters?
+              </Link>
+              <Link
+                href={`https://memorial-pet-care-pro.vercel.app`}
+                className="text-center font-hind  h-full w-44 flex items-center justify-center border-b-[1px] border-[#B1B1B1]"
+              >
+                Want to become part of our memorials?
+              </Link>
+              <Link
+                href={`https://sitter-pet-care-pro.vercel.app`}
+                className="text-center font-hind  h-full w-44 flex items-center justify-center border-b-[1px] border-[#B1B1B1]"
+              >
+                Want to become part of our pet sitter?
               </Link>
               <Link
                 href={`/Settings`}

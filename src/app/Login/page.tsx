@@ -21,7 +21,12 @@ export default function Login() {
   const [loginAsDropDown, setLoginAsDropDown] = useState(false);
 
   const loginAsData = [
-    { key: 0, label: "Pet Owner", type: "client", route: "/Login" },
+    {
+      key: 0,
+      label: "Pet Owner",
+      type: "client",
+      route: "https://pet-care-pro.vercel.app/Login",
+    },
     {
       key: 1,
       label: "Pet Product Seller",
@@ -40,7 +45,12 @@ export default function Login() {
       type: "memorial",
       route: "/Login",
     },
-    { key: 4, label: "Pet Sitting Services", type: "sitter", route: "/Sitter" },
+    {
+      key: 4,
+      label: "Pet Sitting Services",
+      type: "sitter",
+      route: "https://sitter-pet-care-pro.vercel.app/Login",
+    },
     {
       key: 5,
       label: "Pet Boarding Services",
