@@ -5,7 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { message, Modal, Select } from "antd";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { FacebookAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import {
+  FacebookAuthProvider,
+  getAuth,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   getFirestore,
@@ -47,6 +52,7 @@ export default function SignUp() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false); // Prevent duplicate submissions
   const [checkBox, setCheckBox] = useState(false);
+  const [usingAuth, setUsingAuth] = useState(false);
 
   const weeks = [
     {
@@ -175,6 +181,26 @@ export default function SignUp() {
         throw new Error("This account is already in use");
       }
 
+      const usersQuery = query(
+        collection(db, "Users"),
+        where("User_Email", "==", formData.email)
+      );
+      const pendingQuery = query(
+        collection(db, "pending_users"),
+        where("User_Email", "==", formData.email)
+      );
+
+      const [usersSnapshot, pendingSnapshot] = await Promise.all([
+        getDocs(usersQuery),
+        getDocs(pendingQuery),
+      ]);
+
+      if (!usersSnapshot.empty || !pendingSnapshot.empty) {
+        alert("This email is already registered or pending approval");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Create user with Firebase Authentication
       const res = await createUserWithEmailAndPassword(
         formData.email,
@@ -184,7 +210,7 @@ export default function SignUp() {
         throw new Error("Failed to create user. Please try again.");
       }
 
-      const userRef = doc(db, "Users", res.user.uid);
+      const userRef = doc(db, "pending_users", res.user.uid);
       await setDoc(userRef, {
         User_Name: formData.fName + " " + formData.lName,
         User_Email: formData.email,
@@ -222,7 +248,9 @@ export default function SignUp() {
         memorialWorkDays: [],
       });
 
-      router.push("/Login");
+      await signOut(auth);
+
+      router.push("/pending-approval");
     } catch (error) {
       console.error(message, error);
     } finally {
@@ -232,10 +260,12 @@ export default function SignUp() {
 
   const googleAuth = async () => {
     try {
+      const result = await signInWithPopup(auth, provider);
+
       const memorialRef = collection(db, "memorial");
       const q = query(
         memorialRef,
-        where("mortician_email", "==", formData.email)
+        where("mortician_email", "==", result.user.email)
       );
       const memorialSnap = await getDocs(q);
 
@@ -250,6 +280,7 @@ export default function SignUp() {
         !formData.memorialName
       ) {
         alert("Please input all fields");
+        setUsingAuth(true);
         return;
       }
 
@@ -258,9 +289,7 @@ export default function SignUp() {
         return new Error("Failed to create user. Please try again.");
       }
 
-      const result = await signInWithPopup(auth, provider);
-
-      const userRef = doc(db, "Users", result.user.uid);
+      const userRef = doc(db, "pending_users", result.user.uid);
       await setDoc(userRef, {
         User_Name: result.user.displayName,
         User_Email: result.user.email,
@@ -273,8 +302,8 @@ export default function SignUp() {
 
       await setDoc(memorialReg, {
         mortician_uid: result.user.uid,
-        mortician_email: formData.email,
-        mortician_fullname: formData.fName + " " + formData.lName,
+        mortician_email: result.user.email,
+        mortician_fullname: result.user.displayName,
         mortician_contact: formData.contact,
         mortician_memorial_name: formData.memorialName,
         mortician_memorial_address: formData.memorialAddress,
@@ -284,11 +313,9 @@ export default function SignUp() {
         TermsAndConditions: checkBox,
       });
 
-      if (result) {
-        router.push("/");
-      } else {
-        router.push("/Sign-Up");
-      }
+      await signOut(auth);
+
+      router.push("/pending-approval");
     } catch (error) {
       console.log(error);
     }
@@ -296,10 +323,14 @@ export default function SignUp() {
 
   const facebookAuth = async () => {
     try {
+      const result = await signInWithPopup(
+        getAuth(),
+        new FacebookAuthProvider()
+      );
       const memorialRef = collection(db, "memorial");
       const q = query(
         memorialRef,
-        where("mortician_email", "==", formData.email)
+        where("mortician_email", "==", result.user.email)
       );
       const memorialSnap = await getDocs(q);
 
@@ -322,11 +353,7 @@ export default function SignUp() {
         return new Error("Failed to create user. Please try again.");
       }
 
-      const result = await signInWithPopup(
-        getAuth(),
-        new FacebookAuthProvider()
-      );
-      const userRef = doc(db, "Users", result.user.uid);
+      const userRef = doc(db, "pending_users", result.user.uid);
       await setDoc(userRef, {
         User_Name: result.user.displayName,
         User_Email: result.user.email,
@@ -350,12 +377,9 @@ export default function SignUp() {
         TermsAndConditions: checkBox,
       });
 
-      if (result) {
-        router.push("/");
-      } else {
-        router.push("/Sign-Up");
-      }
-      console.log("Facebook Sign In", result);
+      await signOut(auth);
+
+      router.push("/pending-approval");
     } catch (err) {
       console.log(err);
     }
@@ -400,7 +424,7 @@ export default function SignUp() {
               handleSignUp();
             }}
           >
-            <div className="grid grid-cols-2 gap-10">
+            <div className={usingAuth ? `hidden` : `grid grid-cols-2 gap-10`}>
               <div className="relative">
                 <label
                   className="absolute left-7 -top-2 bg-white text-sm  font-hind"
@@ -439,7 +463,7 @@ export default function SignUp() {
               </div>
             </div>
             <div className="grid grid-cols-5 gap-10">
-              <div className="relative col-span-3">
+              <div className={usingAuth ? `hidden` : `relative col-span-3`}>
                 <label
                   htmlFor="emailsignup"
                   className="absolute left-7 -top-2 bg-white text-sm  font-hind"
@@ -496,7 +520,7 @@ export default function SignUp() {
                 />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-10">
+            <div className={usingAuth ? `hidden` : `grid grid-cols-2 gap-10`}>
               <div className="relative">
                 <label
                   htmlFor="password"
@@ -655,7 +679,7 @@ export default function SignUp() {
                 </span>
               </label>
             </div>
-            <div>
+            <div className={usingAuth ? `hidden` : `block`}>
               <button
                 type="submit"
                 id="signup-button"
