@@ -265,7 +265,7 @@ export default function Navigation() {
             <div
               className={
                 logout
-                  ? `grid grid-rows-6 justify-center items-center bg-[#F3F3F3] drop-shadow-xl rounded-lg absolute top-10 -left-3 cursor-pointer h-fit w-56`
+                  ? `grid grid-rows-8 justify-center items-center bg-[#F3F3F3] drop-shadow-xl rounded-lg absolute top-10 -left-3 cursor-pointer h-fit w-56`
                   : `hidden`
               }
             >
