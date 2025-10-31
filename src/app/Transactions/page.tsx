@@ -53,7 +53,7 @@ export default function Transactions() {
   const [myMemorial, setMyMemorial] = useState<MemorialAppointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<DocumentData[]>([]);
-  const [filter, setFilter] = useState("Pending");
+  const [filter, setFilter] = useState("isPending");
   const [dropdownFilter, setDropdownFilter] = useState(false);
   const [approveModal, setApproveModal] = useState(false);
   const [rejectModal, setRejectModal] = useState(false);
@@ -67,8 +67,8 @@ export default function Transactions() {
   const filterWords = [
     {
       id: 0,
-      label: "Pending",
-      value: "Pending",
+      label: "isPending",
+      value: "isPending",
     },
     {
       id: 1,
@@ -275,7 +275,7 @@ export default function Transactions() {
               <FontAwesomeIcon icon={faCheck} className="text-white h-14" />{" "}
             </div>
           </div>
-          <h1 className="font-montserrat font-bold text-3xl">Succeful!</h1>
+          <h1 className="font-montserrat font-bold text-3xl">Successful!</h1>
         </div>
       </div>
     );
@@ -318,7 +318,7 @@ export default function Transactions() {
           </div>
         )}
       </div>
-      {filter === "Pending" && (
+      {filter === "isPending" && (
         <div className="mx-56 flex flex-col gap-5">
           {myMemorial.map((data, index) => {
             return (

@@ -115,6 +115,7 @@ export default function TransactionCustomer({ params }: MemorialID) {
               </span>
             </h1>
           </div>
+
           <Rate
             className="m-auto"
             value={myMemorial?.memorial_service_rate_and_feedback?.rate}

@@ -77,16 +77,16 @@ export default function Login() {
       const docSnap = await getDocs(q);
       if (!docSnap.empty) {
         const result = await signingIn(email, password);
+        console.log(result);
         if (result) {
           router.push("/");
         }
       } else {
-        return (
-          router.push("/Login"),
-          alert(
-            `This account is does not exist on ${loginAs}, go to the Sign Up Page if you want to register as ${loginAs}`
-          )
+        alert(
+          `This account is does not exist on ${loginAs}, go to the Sign Up Page if you want to register as ${loginAs}`
         );
+        router.push("/Login");
+        return;
       }
     } catch (err) {
       console.error(err);
