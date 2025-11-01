@@ -23,6 +23,7 @@ import Loading from "../Loading/page";
 import { Modal, Rate, TimePicker } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import "@ant-design/v5-patch-for-react-19";
 
 interface MemorialAppointment {
   id?: string;
@@ -225,6 +226,7 @@ export default function Transactions() {
 
   const approvedHandle = async () => {
     try {
+      setLoading(true);
       const docRef = doc(db, "mourners", approvedUser?.id || "");
       const docSnap = await getDoc(docRef);
       const notifRef = collection(db, "notifications");
@@ -461,8 +463,8 @@ export default function Transactions() {
         open={approveModal}
         onCancel={() => setApproveModal(false)}
         onClose={() => setApproveModal(false)}
-        onOk={() => {
-          approvedHandle();
+        onOk={async () => {
+          await approvedHandle();
           setApproveModal(false);
         }}
         centered
